@@ -1,8 +1,13 @@
 import uuid from 'node-uuid';
 import policy from 's3-policy';
 import s3 from 's3';
+import fs from 'fs';
+import { promisify } from 'util';
 import { getProjectsForUserId } from './project.controller';
 import { findUserByUsername } from './user.controller';
+
+const unlinkAsync = promisify(fs.unlink)
+
 
 const client = s3.createClient({
   maxAsyncS3: 20,
@@ -23,6 +28,42 @@ const s3Bucket = process.env.S3_BUCKET_URL_BASE ||
 function getExtension(filename) {
   const i = filename.lastIndexOf('.');
   return (i < 0) ? '' : filename.substr(i);
+}
+
+export function uploadFileToS3(req, res) {
+  //req.user.id could be different for if uploading to API
+  //but maybe it's the same bc of the magic of passport
+  const fileExtension = getExtension(req.file.originalname);
+  const filename = uuid.v4() + fileExtension;
+  const s3BucketHttps = process.env.S3_BUCKET_URL_BASE ||
+    `https://s3-${process.env.AWS_REGION}.amazonaws.com/${process.env.S3_BUCKET}/`;
+
+  const key = `${req.user.id}/${filename}`;
+  const uploader = client.uploadFile({
+    localFile: req.file.path,
+    s3Params: {
+      Bucket: process.env.S3_BUCKET,
+      Key: key,
+      ACL: 'public-read'
+    }
+  });
+
+  uploader.on('error', (error) => {
+    console.log(error);
+    res.status(500).send({ error });
+  });
+  uploader.on('progress', () => {
+    console.log("progress", uploader.progressAmount, uploader.progressTotal);
+  });
+  uploader.on('end', () => {
+    //the url is bucket+key somehow or whatever
+    unlinkAsync(req.file.path).then(() => {
+      res.json({
+        url: `${s3BucketHttps}${key}`,
+        name: req.file.originalname
+      });
+    });
+  });
 }
 
 export function getObjectKey(url) {

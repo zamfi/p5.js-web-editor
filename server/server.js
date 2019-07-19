@@ -17,6 +17,7 @@ import config from '../webpack/config.dev';
 
 // Import all required modules
 import api from './routes/api.routes';
+import uploaderApi from './routes/uploader.api.routes';
 import users from './routes/user.routes';
 import sessions from './routes/session.routes';
 import projects from './routes/project.routes';
@@ -25,7 +26,7 @@ import aws from './routes/aws.routes';
 import serverRoutes from './routes/server.routes';
 import embedRoutes from './routes/embed.routes';
 import assetRoutes from './routes/asset.routes';
-import { requestsOfTypeJSON } from './utils/requestsOfType';
+import requestsOfType, { requestsOfTypeJSON } from './utils/requestsOfType';
 
 import { renderIndex } from './views/index';
 import { get404Sketch } from './views/404Page';
@@ -96,6 +97,7 @@ app.use(session({
 
 app.use(passport.initialize());
 app.use(passport.session());
+app.use('/api/v1', requestsOfType('multipart/form-data'), uploaderApi);
 app.use('/api/v1', requestsOfTypeJSON(), api);
 app.use('/api', requestsOfTypeJSON(), users);
 app.use('/api', requestsOfTypeJSON(), sessions);
