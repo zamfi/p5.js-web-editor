@@ -1,12 +1,10 @@
 import uuid from 'node-uuid';
 import policy from 's3-policy';
 import s3 from 's3';
-import fs from 'fs';
-import { promisify } from 'util';
+import rimraf from 'rimraf';
+import path from 'path';
 import { getProjectsForUserId } from './project.controller';
 import { findUserByUsername } from './user.controller';
-
-const unlinkAsync = promisify(fs.unlink)
 
 
 const client = s3.createClient({
@@ -25,28 +23,26 @@ const client = s3.createClient({
 const s3Bucket = process.env.S3_BUCKET_URL_BASE ||
                  `https://s3-${process.env.AWS_REGION}.amazonaws.com/${process.env.S3_BUCKET}/`;
 
-function getExtension(filename) {
+export function getExtension(filename) {
   const i = filename.lastIndexOf('.');
   return (i < 0) ? '' : filename.substr(i);
 }
 
 export function uploadFileToS3(req, res) {
-  //req.user.id could be different for if uploading to API
-  //but maybe it's the same bc of the magic of passport
-  const fileExtension = getExtension(req.file.originalname);
-  const filename = uuid.v4() + fileExtension;
+  if (req.files.length === 0) {
+    return res.status(400).json({ message: 'Request must contain at least one file.' });
+  }
   const s3BucketHttps = process.env.S3_BUCKET_URL_BASE ||
     `https://s3-${process.env.AWS_REGION}.amazonaws.com/${process.env.S3_BUCKET}/`;
-
-  const key = `${req.user.id}/${filename}`;
-  const uploader = client.uploadFile({
-    localFile: req.file.path,
+  const uploader = client.uploadDir({
+    localDir: req.files[0].destination,
     s3Params: {
       Bucket: process.env.S3_BUCKET,
-      Key: key,
-      ACL: 'public-read'
+      ACL: 'public-read',
+      Prefix: `${req.user.id}/`
     }
   });
+  const uploadFiles = [];
 
   uploader.on('error', (error) => {
     console.log(error);
@@ -55,13 +51,22 @@ export function uploadFileToS3(req, res) {
   uploader.on('progress', () => {
     console.log("progress", uploader.progressAmount, uploader.progressTotal);
   });
+  uploader.on('fileUploadStart', (localFilePath, s3Key) => {
+    uploadFiles.push({
+      url: `${s3BucketHttps}${s3Key}`,
+      path: localFilePath 
+    });
+  });
   uploader.on('end', () => {
-    //the url is bucket+key somehow or whatever
-    unlinkAsync(req.file.path).then(() => {
-      res.json({
-        url: `${s3BucketHttps}${key}`,
-        name: req.file.originalname
+    console.log(req.files[0].destination);
+    const parentPath = path.resolve(req.files[0].destination, '../');
+    console.log(parentPath);
+    rimraf(parentPath, () => {
+      const responseFiles = uploadFiles.map((file) => {
+        const foundFile = req.files.find(reqFile => reqFile.path === file.path);
+        return {url: file.url, name: foundFile.originalname};
       });
+      res.json({files: responseFiles });
     });
   });
 }
