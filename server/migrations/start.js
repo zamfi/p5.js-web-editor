@@ -1,3 +1,6 @@
 require('@babel/register');
 require('@babel/polyfill');
-require('./moveBucket');
+const path = require('path');
+// require('./moveBucket');
+require('dotenv').config({ path: path.resolve('.env') });
+require('./populateTotalSize');

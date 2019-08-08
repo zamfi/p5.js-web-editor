@@ -81,7 +81,8 @@ export function createUser(req, res, next) {
                 username: req.user.username,
                 preferences: req.user.preferences,
                 verified: req.user.verified,
-                id: req.user._id
+                id: req.user._id,
+                totalSize: req.user.totalSize
               });
             });
           });
@@ -227,7 +228,8 @@ export function emailVerificationInitiate(req, res) {
               username: req.user.username,
               preferences: req.user.preferences,
               verified: user.verified,
-              id: req.user._id
+              id: req.user._id,
+              totalSize: req.user.totalSize
             });
           }
         });
@@ -271,7 +273,8 @@ export function updatePassword(req, res) {
         email: req.user.email,
         username: req.user.username,
         preferences: req.user.preferences,
-        id: req.user._id
+        id: req.user._id,
+        totalSize: req.user.totalSize
       }));
     });
   });
@@ -297,7 +300,8 @@ export function saveUser(res, user) {
       username: user.username,
       preferences: user.preferences,
       verified: user.verified,
-      id: user._id
+      id: user._id,
+      totalSize: user.totalSize
     });
   });
 }

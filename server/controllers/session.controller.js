@@ -14,7 +14,8 @@ export function createSession(req, res, next) {
         username: req.user.username,
         preferences: req.user.preferences,
         verified: req.user.verified,
-        id: req.user._id
+        id: req.user._id,
+        totalSize: req.user.totalSize
       });
     });
   })(req, res, next);
@@ -27,7 +28,8 @@ export function getSession(req, res) {
       username: req.user.username,
       preferences: req.user.preferences,
       verified: req.user.verified,
-      id: req.user._id
+      id: req.user._id,
+      totalSize: req.user.totalSize
     });
   }
   return res.status(404).send({ message: 'Session does not exist' });
