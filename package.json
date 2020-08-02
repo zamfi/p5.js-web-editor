@@ -153,7 +153,7 @@
     "mockingoose": "^2.13.2",
     "mongoose": "^5.9.2",
     "node-uuid": "^1.4.7",
-    "nodemailer": "^2.6.4",
+    "nodemailer": "^6.4.11",
     "nodemailer-mailgun-transport": "^1.4.0",
     "passport": "^0.3.2",
     "passport-github": "^1.1.0",
