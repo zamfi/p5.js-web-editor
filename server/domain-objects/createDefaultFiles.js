@@ -34,6 +34,7 @@ canvas {
 `;
 
 export default function createDefaultFiles() {
+  console.log('CREATING DEFAULT FILES!');
   return {
     'index.html': {
       content: defaultHTML

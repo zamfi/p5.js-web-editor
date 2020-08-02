@@ -186,6 +186,9 @@
     "sass-extract": "^2.1.0",
     "sass-extract-js": "^0.4.0",
     "sass-extract-loader": "^1.1.0",
+    "sharedb": "^1.4.1",
+    "sharedb-codemirror": "git+https://github.com/zamfi/sharedb-codemirror.git",
+    "sharedb-mongo": "^1.0.0-beta.14",
     "shortid": "^2.2.15",
     "sinon": "^7.5.0",
     "sinon-mongoose": "^2.3.0",
@@ -195,6 +198,8 @@
     "webpack": "^4.41.6",
     "webpack-dev-middleware": "^2.0.6",
     "webpack-hot-middleware": "^2.24.3",
+    "websocket-json-stream": "0.0.3",
+    "ws": "^7.3.1",
     "xhr": "^2.5.0"
   }
 }

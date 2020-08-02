@@ -1,6 +1,9 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import CodeMirror from 'codemirror';
+// import ShareDB from 'sharedb/lib/client';
+import ShareDBCodeMirror from 'sharedb-codemirror';
+
 import beautifyJS from 'js-beautify';
 import 'codemirror/mode/css/css';
 import 'codemirror/addon/selection/active-line';
@@ -124,7 +127,17 @@ class Editor extends React.Component {
     });
 
     this.initializeDocuments(this.props.files);
-    this._cm.swapDoc(this._docs[this.props.file.id]);
+    // this._cm.swapDoc(this._docs[this.props.file.id]);
+
+    this.shareDBCodeMirror = new ShareDBCodeMirror(this._cm, { verbose: true, key: 'content' });
+    // console.log('ATTACHING DOC!', this.props.file.id, this._cm, window.shareDocs[this.props.file.id]);
+    // debugger; // eslint-ignore-line
+    this.shareDBCodeMirror.attachDoc(window.shareDocs[this.props.file.id], (error) => {
+      // console.log('...ATTACHED!', error, this._cm, this._cm?.doc, this.shareDBCodeMirror?.doc);
+      if (error) {
+        console.error(error);
+      }
+    });
 
     this._cm.on('change', debounce(() => {
       this.props.setUnsavedChanges(true);
@@ -170,10 +183,20 @@ class Editor extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
+    // if (this.shareDBCodeMirror?.doc?.id !== this.props.file.id) {
+    // console.log('ATTACHING AGAIN', this.shareDBCodeMirror?.doc?.id, '->', this.props.file?.id);
+    this.shareDBCodeMirror.attachDoc(window.shareDocs[this.props.file.id], (error) => {
+      // console.log('...ATTACHED!', error, this._cm?.doc, this.shareDBCodeMirror?.doc);
+      if (error) {
+        console.error(error);
+      }
+    });
+    // }
+    // const oldDoc = this._cm.swapDoc(this._docs[this.props.file.id]);
+    // this._docs[prevProps.file.id] = oldDoc;
+
     if (this.props.file.content !== prevProps.file.content &&
         this.props.file.content !== this._cm.getValue()) {
-      const oldDoc = this._cm.swapDoc(this._docs[this.props.file.id]);
-      this._docs[prevProps.file.id] = oldDoc;
       this._cm.focus();
       if (!prevProps.unsavedChanges) {
         setTimeout(() => this.props.setUnsavedChanges(false), 400);
@@ -224,6 +247,17 @@ class Editor extends React.Component {
     this._cm = null;
     this.props.provideController(null);
   }
+
+  // getShareDoc(id, content) {
+  //   if (!this.shareDocs) {
+  //     this.shareDocs = {};
+  //   }
+  //   if (!this.shareDocs[id]) {
+  //     this.shareDocs[id] = this.shareConnection.get('files', id);
+  //   }
+  //
+  //   return this.shareDocs[id];
+  // }
 
   getFileMode(fileName) {
     let mode;
@@ -284,10 +318,9 @@ class Editor extends React.Component {
   }
 
   initializeDocuments(files) {
-    this._docs = {};
     files.forEach((file) => {
       if (file.name !== 'root') {
-        this._docs[file.id] = CodeMirror.Doc(file.content, this.getFileMode(file.name)); // eslint-disable-line
+        window.shareDocs[file.id] = window.shareConnection.get('files', file.id); // CodeMirror.Doc(file.content, this.getFileMode(file.name)); // eslint-disable-line
       }
     });
   }

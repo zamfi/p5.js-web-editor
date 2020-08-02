@@ -1,3 +1,5 @@
+import ShareDB from 'sharedb/lib/client';
+
 import objectID from 'bson-objectid';
 import * as ActionTypes from '../../../constants';
 
@@ -110,9 +112,27 @@ function deleteMany(state, ids) {
   return newState;
 }
 
+const ports = {
+  sharedb: 8112
+};
+
 const files = (state, action) => {
   if (state === undefined) {
+    if (!window.shareConnection) {
+      const ws = new WebSocket(`ws://${window.location.hostname}:${ports.sharedb}`);
+      window.shareConnection = new ShareDB.Connection(ws);
+    }
+
     state = initialState(); // eslint-disable-line
+    // debugger; // esline-disable-line
+    if (!window.shareDocs) {
+      window.shareDocs = {};
+    }
+    state.filter(f => f.fileType === 'file').forEach((file) => {
+      window.shareDocs[file.id] = window.shareConnection.get('files', file.id).create({ content: file.content });
+      console.log('CREATED FILE', window.shareDocs[file.id], file, 'CONTENT', file.content);
+    });
+    console.log('CREATED ALL FILES!', window.shareDocs);
   }
   switch (action.type) {
     case ActionTypes.UPDATE_FILE_CONTENT:
@@ -146,6 +166,9 @@ const files = (state, action) => {
         }
         return file;
       });
+      if (action.fileType === 'file' || !action.fileType) {
+        window.shareDocs[action.id] = window.shareConnection.get('files', action.id).create({ content: action.content });
+      }
       return [...newState,
         {
           name: action.name,

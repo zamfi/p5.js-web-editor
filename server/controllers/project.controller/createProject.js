@@ -1,12 +1,19 @@
 import Project from '../../models/project';
 import { toModel, FileValidationError, ProjectValidationError } from '../../domain-objects/Project';
+import sharedb from '../../utils/sharedbController';
 
 export default function createProject(req, res) {
+  console.log('CREATE PROJECT 2?', req.body);
   let projectValues = {
     user: req.user._id
   };
 
   projectValues = Object.assign(projectValues, req.body);
+
+  // SHARING
+  // for (let file of req.body.files) {
+  //   sharedb.updateDoc('files', file.id, file.content);
+  // }
 
   function sendFailure() {
     res.json({ success: false });

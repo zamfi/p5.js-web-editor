@@ -9,6 +9,7 @@ import { deleteObjectsFromS3, getObjectKey } from './aws.controller';
 // be fixed in mongoose soon
 // https://github.com/Automattic/mongoose/issues/4049
 export function createFile(req, res) {
+  console.error('CREATING FILE!', req.body);
   Project.findOneAndUpdate(
     {
       _id: req.params.project_id,
