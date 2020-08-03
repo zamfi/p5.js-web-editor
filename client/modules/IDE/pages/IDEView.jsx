@@ -19,6 +19,7 @@ import ErrorModal from '../components/ErrorModal';
 import Nav from '../../../components/Nav';
 import Console from '../components/Console';
 import Toast from '../components/Toast';
+import Wizard from '../components/Wizard';
 import * as FileActions from '../actions/files';
 import * as IDEActions from '../actions/ide';
 import * as ProjectActions from '../actions/project';
@@ -374,6 +375,7 @@ class IDEView extends React.Component {
             </SplitPane>
           </SplitPane>
         </main>
+        <Wizard />
         { this.props.ide.modalIsVisible &&
           <NewFileModal />
         }

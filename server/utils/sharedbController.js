@@ -16,6 +16,7 @@ export function start() {
   const wss = new WebSocket.Server({ server });
   wss.on('connection', (ws, req) => {
     const stream = new WebSocketJSONStream(ws);
+    // stream.on('data', (msg) => console.log("WSJSON msg", msg));
     sharedb.listen(stream);
   });
   server.listen(SHAREDB_PORT, () => {

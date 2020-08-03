@@ -134,6 +134,7 @@ class Editor extends React.Component {
     // debugger; // eslint-ignore-line
     this.shareDBCodeMirror.attachDoc(window.shareDocs[this.props.file.id], (error) => {
       // console.log('...ATTACHED!', error, this._cm, this._cm?.doc, this.shareDBCodeMirror?.doc);
+      this._cm.setOption('mode', this.getFileMode(this.props.file.name));
       if (error) {
         console.error(error);
       }
@@ -187,6 +188,7 @@ class Editor extends React.Component {
     // console.log('ATTACHING AGAIN', this.shareDBCodeMirror?.doc?.id, '->', this.props.file?.id);
     this.shareDBCodeMirror.attachDoc(window.shareDocs[this.props.file.id], (error) => {
       // console.log('...ATTACHED!', error, this._cm?.doc, this.shareDBCodeMirror?.doc);
+      this._cm.setOption('mode', this.getFileMode(this.props.file.name));
       if (error) {
         console.error(error);
       }

@@ -32,6 +32,7 @@ import { renderIndex } from './views/index';
 import { get404Sketch } from './views/404Page';
 
 import { start } from './utils/sharedbController';
+import { startSayAnythingEchoer } from './utils/sayAnythingController';
 
 const app = new Express();
 const MongoStore = connectMongo(session);
@@ -183,6 +184,11 @@ app.listen(process.env.PORT, (error) => {
     console.log(`p5js web editor is running on port: ${process.env.PORT}!`); // eslint-disable-line
   }
 });
+
+// start up the sharedb stuff
 start();
+
+// start up the sayanything stuff
+startSayAnythingEchoer();
 
 export default app;
