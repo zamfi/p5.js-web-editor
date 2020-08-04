@@ -62,9 +62,13 @@ class WizardPanel extends React.Component {
   }
 
   teeUp(msg) {
+    const indexOfSelection = msg.indexOf('...');
     this.setState({
-      proposedMessage: msg.replace(/\.\.\.$/, '')
-    }, () => this.inputBox.current.focus());
+      proposedMessage: msg
+    }, () => {
+      this.inputBox.current.focus();
+      this.inputBox.current.setSelectionRange(indexOfSelection, indexOfSelection + 3);
+    });
   }
 
   sendImmediately(msg) {
