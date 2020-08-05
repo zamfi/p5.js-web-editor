@@ -104,13 +104,14 @@ class WizardPanel extends React.Component {
       'What are you thinking about right now?',
       'Can you tell me why you choose to ...?',
       'What does the code on line... do?',
-      'Can I add a comment about ...?'
+      'Can I add a comment about ...?',
+      'I have a question.'
     ];
 
     return (
       <section className="wizard">
+        <h6>Canned Messages</h6>
         <div className="default-messages message-list">
-          <h6>Canned Messages</h6>
           {defaultMessages.map((msg, i) => (
             <div key={`default-message-${i}`}><span onClick={()=>this.teeUp(msg)}>{msg}</span>
               <button onClick={()=>this.teeUp(msg)}>🏌🏿‍♀️</button>
@@ -118,8 +119,8 @@ class WizardPanel extends React.Component {
             </div>
           ))}
         </div>
+        <h6>Message History</h6>
         <div className="scrolls-view message-list">
-          <h6>Message History</h6>
           {this.state.sentMessages.length > 0 ? this.state.sentMessages.map((msg, i, arr) =>
             <div key={`sent-message-${i}`}><span onClick={()=>this.teeUp(msg)}>{msg}</span>
               <button onClick={()=>this.teeUp(msg)}>🏌🏿‍♀️</button>
