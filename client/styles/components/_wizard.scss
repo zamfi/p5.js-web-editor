@@ -16,10 +16,36 @@
 
 .scrolls-view {
   max-height: 400px;
-  min-height: 100px;
   overflow-y: scroll;
+  margin-bottom: 20px;
 }
 
 .sayanything-box {
   width: 500px;
+}
+
+.wizard span {
+  cursor: pointer;
+}
+
+.wizard h6 {
+  padding: 0;
+  margin: 0;
+  margin-bottom: 5px;
+  text-transform: uppercase;
+  text-decoration: underline;
+}
+
+.wizard .message-list div {
+  padding-left: 7px;
+}
+
+.wizard .info {
+  padding-left: 7px;
+  color: #999;
+  font-style: italic;
+}
+
+button.rocket-button {
+  cursor: ne-resize;
 }

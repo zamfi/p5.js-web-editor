@@ -67,7 +67,9 @@ class WizardPanel extends React.Component {
       proposedMessage: msg
     }, () => {
       this.inputBox.current.focus();
-      this.inputBox.current.setSelectionRange(indexOfSelection, indexOfSelection + 3);
+      if (indexOfSelection >= 0) {
+        this.inputBox.current.setSelectionRange(indexOfSelection, indexOfSelection + 3);
+      }
     });
   }
 
@@ -98,31 +100,35 @@ class WizardPanel extends React.Component {
     }
 
     const defaultMessages = [
-      'Tell me about this function?',
-      'Tell me about what you are thinking?',
-      'Why did you choose to ...'
+      'Can you tell me about this function?',
+      'What are you thinking about right now?',
+      'Can you tell me why you choose to ...?',
+      'What does the code on line... do?',
+      'Can I add a comment about ...?'
     ];
 
     return (
       <section className="wizard">
-        <div className="default-messages">
+        <div className="default-messages message-list">
+          <h6>Canned Messages</h6>
           {defaultMessages.map((msg, i) => (
-            <div key={`default-message-${i}`}>{msg}
+            <div key={`default-message-${i}`}><span onClick={()=>this.teeUp(msg)}>{msg}</span>
               <button onClick={()=>this.teeUp(msg)}>🏌🏿‍♀️</button>
-              <button onClick={()=>this.sendImmediately(msg)}>🚀</button>
+              <button onClick={()=>this.sendImmediately(msg)} className="rocket-button">🚀</button>
             </div>
           ))}
         </div>
-        <div className="scrolls-view">
-          {this.state.sentMessages.map((msg, i, arr) =>
-            <div key={`sent-message-${i}`}>{msg}
+        <div className="scrolls-view message-list">
+          <h6>Message History</h6>
+          {this.state.sentMessages.length > 0 ? this.state.sentMessages.map((msg, i, arr) =>
+            <div key={`sent-message-${i}`}><span onClick={()=>this.teeUp(msg)}>{msg}</span>
               <button onClick={()=>this.teeUp(msg)}>🏌🏿‍♀️</button>
               {i === arr.length-1 && this.state.lastMessageInProgress ?
                 <button onClick={()=>this.justStopTalking()}>✋🏼</button> :
-                <button onClick={()=>this.sendImmediately(msg)}>🚀</button>
+                <button onClick={()=>this.sendImmediately(msg)} className="rocket-button">🚀</button>
               }
             </div>
-          )}
+          ) : <span className="info">No message history (yet!)</span>}
         </div>
         🗣<input
             className="sayanything-box"
