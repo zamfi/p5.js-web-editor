@@ -113,13 +113,13 @@ function deleteMany(state, ids) {
 }
 
 const ports = {
-  sharedb: 8112
+  sharedb: window.location.port ? ':8112' : ''
 };
 
 const files = (state, action) => {
   if (state === undefined) {
     if (!window.shareConnection) {
-      const ws = new WebSocket(`ws://${window.location.hostname}:${ports.sharedb}`);
+      const ws = new WebSocket(`${window.location.protocol === 'https:' ? 'wss' : 'ws'}://${window.location.hostname}${ports.sharedb}/sdbws`);
       window.shareConnection = new ShareDB.Connection(ws);
     }
 
