@@ -19,7 +19,7 @@ class WizardPanel extends React.Component {
 
     this.inputBox = React.createRef();
 
-    this.ws = new WebSocket(`ws://${window.location.hostname}:${8113}`);
+    this.ws = new WebSocket(`${window.location.protocol === 'http:' ? 'ws' : 'wss'}://${window.location.hostname}:${8113}`);
     if (!isWizard) {
       this.ws.onmessage = event => this.handleSpokenMessage(event);
     } else {
