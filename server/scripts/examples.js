@@ -55,6 +55,7 @@ function getCategories() {
     headers,
     json: true
   };
+  console.log('GETTING CATEGORIES', options.url);
   return rp(options).then((res) => {
     res.forEach((metadata) => {
       let category = '';
@@ -73,11 +74,12 @@ function getCategories() {
 function getSketchesInCategories(categories) {
   return Q.all(categories.map((category) => {
     const options = {
-      url: `${category.url.replace('?ref=master', '')}?client_id=${clientId}&client_secret=${clientSecret}`,
+      url: `${category.url.replace('?ref=master', '')}&client_id=${clientId}&client_secret=${clientSecret}`,
       method: 'GET',
       headers,
       json: true
     };
+    console.log('GETTING SKETCHES FROM URL', options.url);
 
     return rp(options).then((res) => {
       const projectsInOneCategory = [];
